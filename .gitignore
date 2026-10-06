@@ -9,3 +9,9 @@ zjmf-n/
 1.txt
 lxdapi/release/
 AGENTS.md
+
+# 本地工作副本 / 运维依赖（不入库）
+.qz-pylibs/
+.qz-preview/
+.qz-spa/
+.workbuddy/
