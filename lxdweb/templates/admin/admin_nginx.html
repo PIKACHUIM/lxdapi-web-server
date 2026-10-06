@@ -23,11 +23,12 @@
             background-color: rgba(255, 255, 255, calc(var(--content-opacity) / 100)) !important;
         }
     </style>
+    <link rel="stylesheet" href="/static/css/qz-theme.css">
 </head>
 <body class="min-h-screen flex flex-col">
     {{template "admin/admin_header.html" .}}
     
-    <div class="flex-1 relative" style="{{if .BgImage}}background-image: url('{{.BgImage}}'); background-size: cover; background-position: center; background-attachment: fixed;{{else}}background-color: #f9fafb;{{end}}">
+    <div class="flex-1 relative" style="{{if .BgImage}}background-image: url('{{.BgImage}}'); background-size: cover; background-position: center; background-attachment: fixed;{{else}}background-color: var(--qz-canvas);{{end}}">
         {{if .BgImage}}<div class="absolute inset-0 bg-white pointer-events-none" style="opacity: {{.BgOpacity}}%;"></div>{{end}}
         <div class="relative container mx-auto px-4 py-8 pb-12">
 
@@ -831,7 +832,6 @@
         </div>
     </div>
     
-    {{template "admin/admin_footer.html" .}}
 
 </body>
 </html>

@@ -9,14 +9,14 @@
 {{template "container/container_toast.html"}}
 
 <style>
-    body { font-family: 'Inter', sans-serif; }
+    /* 页面级过渡工具类：沿用既有命名，保证各业务页继续可用 */
     @keyframes gentlePulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.85; }
     }
-    
+
     .animate-pulse-slow { animation: gentlePulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    
+
     .card-hover {
         transition: all 0.25s ease;
     }
@@ -24,7 +24,7 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.1);
     }
-    
+
     .btn-hover {
         transition: all 0.25s ease;
     }
@@ -35,44 +35,54 @@
     .btn-hover:active {
         transform: translateY(0);
     }
-    
+
     .smooth-transition {
         transition: all 0.25s ease;
     }
-
-    @media (max-width: 640px) {
-        .nav-logout-text {
-            display: none;
-        }
-    }
 </style>
 
-<nav class="bg-white shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-4">
-        <div class="flex justify-between items-center py-3 md:py-4">
-            <div class="flex items-center">
-                <div class="flex items-center space-x-2">
-                    <span class="iconify text-blue-600" data-icon="mdi:cube-outline" data-width="28" data-height="28" class="md:w-8 md:h-8"></span>
-                    <h1 class="text-lg md:text-2xl font-bold text-blue-600">{{ .SystemName }}</h1>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium btn-hover shadow-sm flex items-center gap-2">
-                    <span class="iconify" data-icon="mdi:logout" data-width="16"></span>
-                    <span class="nav-logout-text">退出</span>
-                </button>
-            </div>
+<header class="qz-topbar">
+    <div class="qz-shell qz-topbar-inner">
+        <a href="/container/dashboard" class="qz-brand">
+            <span class="qz-brand-logo">
+                <span class="iconify" data-icon="mdi:cube-outline" data-width="18" data-height="18"></span>
+            </span>
+            <span class="qz-brand-text">
+                <strong>{{ .SystemName }}</strong>
+                <em>Instance Console</em>
+            </span>
+        </a>
+
+        <div class="qz-topbar-actions">
+            <button type="button" onclick="logout()" class="qz-iconbtn qz-iconbtn-danger" title="退出登录" aria-label="退出登录">
+                <span class="iconify" data-icon="mdi:logout" data-width="18" data-height="18"></span>
+            </button>
         </div>
     </div>
-</nav>
+</header>
+
+<div class="qz-subbar">
+    <div class="qz-shell qz-subbar-inner">
+        <nav class="qz-crumb" aria-label="面包屑">
+            <a href="/container/dashboard">Home</a>
+            <i>/</i>
+            <span>{{ .SystemName }}</span>
+            <i>/</i>
+            <b>实例控制台</b>
+        </nav>
+
+        <nav class="qz-tabs" aria-label="主导航">
+            <a href="/container/dashboard" class="qz-tab is-active">实例控制台</a>
+        </nav>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 function logout() {
+    if (!confirm('确定要退出登录吗？')) return;
     localStorage.removeItem('container_hash');
     window.location.href = '/container/login';
 }
-
-
 </script>
 {{end}}

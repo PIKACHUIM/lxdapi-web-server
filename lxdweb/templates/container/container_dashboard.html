@@ -48,6 +48,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
         }
     </style>
+    <link rel="stylesheet" href="/static/css/qz-theme.css">
 </head>
 <body class="min-h-screen flex flex-col">
     <div id="noticeFloat" style="display: none; position: fixed; top: 80px; left: 20px; z-index: 9999; max-width: 400px; width: calc(100% - 40px);">
@@ -73,7 +74,7 @@
     
     {{template "container/container_header.html" .}}
     
-    <div class="flex-1 relative" style="{{if .BgImage}}background-image: url('{{.BgImage}}'); background-size: cover; background-position: center; background-attachment: fixed;{{else}}background-color: #f9fafb;{{end}}">
+    <div class="flex-1 relative" style="{{if .BgImage}}background-image: url('{{.BgImage}}'); background-size: cover; background-position: center; background-attachment: fixed;{{else}}background-color: var(--qz-canvas);{{end}}">
         {{if .BgImage}}<div class="absolute inset-0 bg-white pointer-events-none" style="opacity: {{.BgOpacity}}%; z-index: 0;"></div>{{end}}
         <div class="relative container mx-auto px-4 py-8 pb-12 max-w-7xl" style="z-index: 1;">
 
@@ -2246,7 +2247,6 @@
         </div>
     </div>
     
-    {{template "container/container_footer.html" .}}
     
     {{if .UseLocalCDN}}
     <script src="/static/js/marked.min.js"></script>

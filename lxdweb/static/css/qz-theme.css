@@ -1,0 +1,1009 @@
+/*!
+ * ============================================================================
+ *  QZSYSTEM Console Theme  ·  轻舟云风格控制台主题
+ * ----------------------------------------------------------------------------
+ *  统一控制台视觉语言：深色顶栏 + 白色子栏（面包屑 / 标签页）+ 浅灰画布
+ *  + 白色卡片 + 扁平化蓝色主按钮。
+ *
+ *  设计令牌使用 OKLCH 色彩空间；中性色统一带 260° 冷色调（非纯灰）。
+ *  该文件在 daisyUI 之后加载，通过重映射 daisyUI 主题变量实现全局换肤，
+ *  因此不会与页面内联的 Tailwind 工具类、自定义配色产生特异性冲突。
+ *
+ *  层级：
+ *    1. 设计令牌 (tokens)
+ *    2. daisyUI 主题变量重映射
+ *    3. 基础层 (reset / 排版 / 画布 / 滚动条)
+ *    4. 控制台外壳 (topbar / subbar / crumb / tabs / mobile)
+ *    5. 组件精修 (btn / input / table / badge / alert / modal ...)
+ *    6. 动效与无障碍
+ * ============================================================================
+ */
+
+/* ==========================================================================
+   1. 设计令牌
+   ========================================================================== */
+:root {
+    /* 品牌 / 语义色 */
+    --qz-primary: #1677ff;
+    --qz-primary-hover: #4096ff;
+    --qz-primary-active: #0958d9;
+    --qz-primary-soft: #eaf2ff;
+    --qz-primary-soft-border: #cfe2ff;
+
+    --qz-success: #52c41a;
+    --qz-success-soft: #f0fbe8;
+    --qz-warning: #faad14;
+    --qz-warning-soft: #fff8e6;
+    --qz-danger: #ff4d4f;
+    --qz-danger-soft: #fff1f0;
+
+    /* 表面 / 描边 */
+    --qz-canvas: #f4f6fa;
+    --qz-surface: #ffffff;
+    --qz-surface-sunken: #f7f8fa;
+    --qz-border: #e8ebf0;
+    --qz-border-strong: #d9dde3;
+    --qz-divider: #f0f2f5;
+
+    /* 文本 */
+    --qz-text: #26272b;
+    --qz-text-2: #4e5969;
+    --qz-text-3: #8c8c8c;
+
+    /* 深色顶栏 */
+    --qz-topbar: #1b1e23;
+    --qz-topbar-2: #23272e;
+    --qz-topbar-text: #ffffff;
+    --qz-topbar-muted: #8a93a3;
+
+    /* 尺寸 */
+    --qz-topbar-h: 56px;
+    --qz-subbar-h: 46px;
+    --qz-shell-max: 1280px;
+    --qz-radius: 6px;
+    --qz-radius-sm: 4px;
+    --qz-radius-pill: 999px;
+
+    /* 阴影 */
+    --qz-shadow-xs: 0 1px 2px rgba(16, 24, 40, .05);
+    --qz-shadow-sm: 0 1px 3px rgba(16, 24, 40, .06), 0 1px 2px rgba(16, 24, 40, .04);
+    --qz-shadow-md: 0 4px 12px -2px rgba(16, 24, 40, .10);
+    --qz-shadow-lg: 0 12px 28px -8px rgba(16, 24, 40, .16);
+
+    /* 字体：拉丁 Inter + 中文系统黑体 */
+    --qz-font: "Inter", "HarmonyOS Sans SC", "MiSans", "PingFang SC",
+        "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans SC",
+        "Helvetica Neue", Arial, sans-serif;
+    --qz-font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas,
+        "Liberation Mono", monospace;
+
+    /* 动效：快入慢出，控制台不适用弹性曲线 */
+    --qz-ease: cubic-bezier(.16, 1, .3, 1);
+    --qz-dur-fast: 120ms;
+    --qz-dur: 180ms;
+
+    /* 间距基数 4px */
+    --qz-sp-1: 4px;
+    --qz-sp-2: 8px;
+    --qz-sp-3: 12px;
+    --qz-sp-4: 16px;
+    --qz-sp-5: 20px;
+    --qz-sp-6: 24px;
+}
+
+/* ==========================================================================
+   2. daisyUI 主题变量重映射
+   —— daisyUI 4 在现代浏览器下走 oklch(var(--x)) 分支，因此直接替换变量
+      即可全局换肤，无需与工具类比拼优先级。
+   ========================================================================== */
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    /* primary #1677ff */
+    --p: 59.8657% 0.2194 259.04;
+    --pc: 100% 0 0;
+    /* secondary：冷灰蓝 #5a6b86 */
+    --s: 52.4288% 0.0475 259.56;
+    --sc: 100% 0 0;
+    /* accent */
+    --a: 73.81% 0.1238 194.8;
+    --ac: 100% 0 0;
+    /* neutral */
+    --n: 36.609% 0.0153 259.81;
+    --nc: 100% 0 0;
+
+    /* base 层级 */
+    --b1: 100% 0 0;
+    --b2: 97.8932% 0.0029 264.54;
+    --b3: 95.4754% 0.0058 264.53;
+    --bc: 27.3326% 0.0075 274.68;
+
+    /* 状态色 */
+    --in: 59.8657% 0.2194 259.04;
+    --inc: 100% 0 0;
+    --su: 72.5551% 0.2182 138.49;
+    --suc: 100% 0 0;
+    --wa: 80.1629% 0.1651 76;
+    --wac: 100% 0 0;
+    --er: 67.3245% 0.2143 24.47;
+    --erc: 100% 0 0;
+
+    /* 圆角 / 描边 / 动效：由“圆润”改为“克制的直角” */
+    --rounded-box: var(--qz-radius);
+    --rounded-btn: var(--qz-radius-sm);
+    --rounded-badge: var(--qz-radius-sm);
+    --tab-radius: var(--qz-radius-sm);
+    --border-btn: 1px;
+    --animation-btn: var(--qz-dur-fast);
+    --animation-input: var(--qz-dur-fast);
+    --btn-focus-scale: 1;
+}
+
+[data-theme="dark"] {
+    /* 暗色模式沿用 daisyUI 结构，仅对齐品牌主色与圆角 */
+    --p: 67.2557% 0.176 255.3;
+    --pc: 17% 0.02 260;
+    --rounded-box: var(--qz-radius);
+    --rounded-btn: var(--qz-radius-sm);
+    --rounded-badge: var(--qz-radius-sm);
+    --border-btn: 1px;
+    --btn-focus-scale: 1;
+}
+
+/* ==========================================================================
+   3. 基础层
+   ========================================================================== */
+html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--qz-font);
+    font-feature-settings: "tnum" 1, "cv05" 1;
+    color: var(--qz-text);
+    background-color: var(--qz-canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--qz-text);
+    letter-spacing: -.01em;
+}
+
+code, pre, .font-mono, .yaml-editor {
+    font-family: var(--qz-font-mono);
+}
+
+/* 数字、时间、流量等场景的等宽数字对齐 */
+.qz-num {
+    font-variant-numeric: tabular-nums;
+}
+
+::selection {
+    background: rgba(22, 119, 255, .16);
+}
+
+/* 细滚动条：控制台信息密度高，默认滚动条过于笨重 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #c9cfd8 transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #ccd2db;
+    border: 2px solid transparent;
+    border-radius: var(--qz-radius-pill);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aeb6c2;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* 统一的可见焦点环 */
+:focus-visible {
+    outline: 2px solid var(--qz-primary);
+    outline-offset: 1px;
+}
+
+/* ==========================================================================
+   4. 控制台外壳
+   ========================================================================== */
+
+/* 4.1 内容宽度：与 Tailwind `container` / `max-w-7xl` 的 1280px 对齐 */
+.qz-shell {
+    width: 100%;
+    max-width: var(--qz-shell-max);
+    margin-inline: auto;
+    padding-inline: var(--qz-sp-4);
+}
+
+/* 4.2 深色顶栏 */
+.qz-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: linear-gradient(180deg, var(--qz-topbar-2) 0%, var(--qz-topbar) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.qz-topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--qz-sp-4);
+    height: var(--qz-topbar-h);
+}
+
+/* 品牌区 */
+.qz-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.qz-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: var(--qz-radius);
+    color: #fff;
+    background-color: var(--qz-primary);
+    background-image:
+        linear-gradient(135deg, rgba(255, 255, 255, .28) 0%, rgba(255, 255, 255, 0) 60%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .16) 0 2px, transparent 2px 6px);
+    box-shadow: 0 2px 8px -2px rgba(22, 119, 255, .7);
+    transition: transform var(--qz-dur) var(--qz-ease);
+}
+
+.qz-brand:hover .qz-brand-logo {
+    transform: translateY(-1px);
+}
+
+.qz-brand-logo .iconify {
+    display: block;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .2));
+}
+
+.qz-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    min-width: 0;
+}
+
+.qz-brand-text strong {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--qz-topbar-text);
+    letter-spacing: .01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qz-brand-text em {
+    font-style: normal;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--qz-topbar-muted);
+    margin-top: 1px;
+}
+
+/* 顶栏右侧操作区 */
+.qz-topbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--qz-sp-2);
+    flex-shrink: 0;
+}
+
+.qz-userchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding-inline: 10px;
+    border-radius: var(--qz-radius-sm);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #d6dae1;
+    background: rgba(255, 255, 255, .07);
+    border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.qz-userchip .iconify {
+    color: var(--qz-topbar-muted);
+}
+
+.qz-iconbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--qz-radius-sm);
+    color: #cfd4dc;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color var(--qz-dur) var(--qz-ease),
+        color var(--qz-dur) var(--qz-ease),
+        border-color var(--qz-dur) var(--qz-ease);
+}
+
+.qz-iconbtn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .1);
+    border-color: rgba(255, 255, 255, .12);
+}
+
+.qz-iconbtn-danger:hover {
+    color: #ffb3b3;
+    background: rgba(255, 77, 79, .16);
+    border-color: rgba(255, 77, 79, .3);
+}
+
+/* 4.3 白色子栏：面包屑 + 标签页 */
+.qz-subbar {
+    position: sticky;
+    top: var(--qz-topbar-h);
+    z-index: 45;
+    background: var(--qz-surface);
+    border-bottom: 1px solid var(--qz-border);
+}
+
+.qz-subbar-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--qz-sp-5);
+    height: var(--qz-subbar-h);
+}
+
+.qz-crumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--qz-text-3);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.qz-crumb i {
+    font-style: normal;
+    color: #c4c9d1;
+}
+
+.qz-crumb b {
+    font-weight: 500;
+    color: var(--qz-text);
+}
+
+.qz-crumb a:hover {
+    color: var(--qz-primary);
+}
+
+/* 标签页导航 */
+.qz-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    height: 100%;
+    margin-left: auto;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+}
+
+.qz-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.qz-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    padding-inline: 14px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--qz-text-2);
+    text-decoration: none;
+    white-space: nowrap;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--qz-dur) var(--qz-ease),
+        background-color var(--qz-dur) var(--qz-ease);
+}
+
+.qz-tab::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: var(--qz-primary);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--qz-dur) var(--qz-ease);
+}
+
+.qz-tab:hover {
+    color: var(--qz-primary);
+    background: var(--qz-primary-soft);
+}
+
+.qz-tab.is-active {
+    color: var(--qz-primary);
+    font-weight: 500;
+}
+
+.qz-tab.is-active::after {
+    transform: scaleX(1);
+}
+
+.qz-tab:focus-visible {
+    outline-offset: -2px;
+}
+
+/* 标签页分组下拉（资源管理 / 插件拓展 / 网络配置） */
+.qz-tabgroup {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+}
+
+.qz-tabgroup-panel {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 0;
+    min-width: 190px;
+    padding: var(--qz-sp-1);
+    background: var(--qz-surface);
+    border: 1px solid var(--qz-border);
+    border-radius: var(--qz-radius);
+    box-shadow: var(--qz-shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity var(--qz-dur) var(--qz-ease),
+        transform var(--qz-dur) var(--qz-ease),
+        visibility var(--qz-dur);
+    z-index: 60;
+}
+
+.qz-tabgroup:hover .qz-tabgroup-panel,
+.qz-tabgroup:focus-within .qz-tabgroup-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.qz-tabgroup:hover > .qz-tab,
+.qz-tabgroup.is-active > .qz-tab {
+    color: var(--qz-primary);
+    background: var(--qz-primary-soft);
+}
+
+.qz-tabgroup.is-active > .qz-tab {
+    font-weight: 500;
+}
+
+.qz-tabgroup.is-active > .qz-tab::after {
+    transform: scaleX(1);
+}
+
+.qz-tabmenu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--qz-sp-2);
+    padding: 7px 10px;
+    border-radius: var(--qz-radius-sm);
+    font-size: 13px;
+    color: var(--qz-text-2);
+    text-decoration: none;
+    transition: background-color var(--qz-dur-fast) var(--qz-ease),
+        color var(--qz-dur-fast) var(--qz-ease);
+}
+
+.qz-tabmenu-item .iconify {
+    color: var(--qz-text-3);
+    flex-shrink: 0;
+}
+
+.qz-tabmenu-item:hover {
+    background: var(--qz-primary-soft);
+    color: var(--qz-primary);
+}
+
+.qz-tabmenu-item:hover .iconify {
+    color: var(--qz-primary);
+}
+
+.qz-tabmenu-item.is-active {
+    background: var(--qz-primary-soft);
+    color: var(--qz-primary);
+    font-weight: 500;
+}
+
+.qz-tabmenu-item.is-active .iconify {
+    color: var(--qz-primary);
+}
+
+/* 4.4 移动端菜单 */
+.qz-mobilemenu {
+    background: var(--qz-surface);
+    border-top: 1px solid var(--qz-border);
+    box-shadow: var(--qz-shadow-md);
+}
+
+/* 4.5 画布 */
+.qz-canvas {
+    background-color: var(--qz-canvas);
+}
+
+/* ==========================================================================
+   5. 组件精修
+   ========================================================================== */
+
+/* 5.1 按钮：扁平、紧凑，贴近参考图的 32px 高度 */
+html body .btn {
+    height: 32px;
+    min-height: 32px;
+    padding-inline: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    gap: 6px;
+    box-shadow: none;
+    letter-spacing: .01em;
+    transition: background-color var(--qz-dur) var(--qz-ease),
+        border-color var(--qz-dur) var(--qz-ease),
+        color var(--qz-dur) var(--qz-ease);
+}
+
+html body .btn-sm {
+    height: 28px;
+    min-height: 28px;
+    padding-inline: 10px;
+    font-size: 12px;
+}
+
+html body .btn-xs {
+    height: 24px;
+    min-height: 24px;
+    padding-inline: 8px;
+    font-size: 11.5px;
+    gap: 4px;
+}
+
+html body .btn-lg {
+    height: 38px;
+    min-height: 38px;
+    padding-inline: 16px;
+    font-size: 14px;
+}
+
+html body .btn-square,
+html body .btn-circle {
+    padding-inline: 0;
+}
+
+html body .btn:disabled,
+html body .btn[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* 中性按钮（未指定颜色修饰、也未用 bg-* 覆盖）→ 白底描边 */
+html body .btn:not(.btn-primary):not(.btn-secondary):not(.btn-accent):not(.btn-info):not(.btn-success):not(.btn-warning):not(.btn-error):not(.btn-neutral):not(.btn-outline):not([class*="bg-"]) {
+    background-color: var(--qz-surface);
+    border-color: var(--qz-border-strong);
+    color: var(--qz-text);
+}
+
+html body .btn:not(.btn-primary):not(.btn-secondary):not(.btn-accent):not(.btn-info):not(.btn-success):not(.btn-warning):not(.btn-error):not(.btn-neutral):not(.btn-outline):not([class*="bg-"]):hover {
+    background-color: var(--qz-primary-soft);
+    border-color: var(--qz-primary);
+    color: var(--qz-primary);
+}
+
+html body .btn-primary:hover {
+    background-color: var(--qz-primary-hover);
+    border-color: var(--qz-primary-hover);
+}
+
+html body .btn-primary:active {
+    background-color: var(--qz-primary-active);
+    border-color: var(--qz-primary-active);
+}
+
+/* 5.2 表单控件：32px 高、4px 圆角、蓝色聚焦环 */
+html body .input,
+html body .select,
+html body .textarea {
+    font-size: 13px;
+    border-radius: var(--qz-radius-sm);
+    color: var(--qz-text);
+    transition: border-color var(--qz-dur) var(--qz-ease),
+        box-shadow var(--qz-dur) var(--qz-ease);
+}
+
+html body .input,
+html body .select {
+    height: 32px;
+    min-height: 32px;
+    padding-inline: 10px;
+}
+
+html body .textarea {
+    padding: 6px 10px;
+    line-height: 1.6;
+}
+
+html body .input-sm,
+html body .select-sm {
+    height: 28px;
+    min-height: 28px;
+    padding-inline: 8px;
+    font-size: 12px;
+}
+
+html body .input-xs,
+html body .select-xs {
+    height: 24px;
+    min-height: 24px;
+    padding-inline: 6px;
+    font-size: 11.5px;
+}
+
+/* 聚焦：仅在没有自定义边框色（如 border-red-500 校验态）时接管 */
+html body .input:focus:not([class*="border-"]),
+html body .input:focus-within:not([class*="border-"]),
+html body .select:focus:not([class*="border-"]),
+html body .textarea:focus:not([class*="border-"]) {
+    border-color: var(--qz-primary);
+}
+
+html body .input:focus,
+html body .input:focus-within,
+html body .select:focus,
+html body .textarea:focus {
+    outline: 2px solid rgba(22, 119, 255, .18);
+    outline-offset: 1px;
+}
+
+html body .label-text {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--qz-text-2);
+}
+
+html body .label-text-alt {
+    font-size: 11.5px;
+    color: var(--qz-text-3);
+}
+
+html body .checkbox,
+html body .radio {
+    --chkbg: 59.8657% 0.2194 259.04;
+    --chkfg: 100% 0 0;
+    border-color: var(--qz-border-strong);
+    border-radius: 3px;
+}
+
+html body .radio {
+    border-radius: 50%;
+}
+
+html body .checkbox:checked,
+html body .checkbox[aria-checked="true"] {
+    border-color: var(--qz-primary);
+}
+
+html body .checkbox-xs {
+    height: 14px;
+    width: 14px;
+}
+
+html body .toggle:checked,
+html body .toggle[aria-checked="true"] {
+    color: var(--qz-primary);
+}
+
+html body .range {
+    height: 4px;
+    border-radius: var(--qz-radius-pill);
+}
+
+/* 5.3 表格：参考图的 13px / 灰底表头 / 细分割线 */
+html body .table {
+    font-size: 13px;
+    border-radius: var(--qz-radius);
+}
+
+html body .table :where(th, td) {
+    padding: 10px 12px;
+    vertical-align: middle;
+}
+
+html body .table thead th {
+    background-color: #fafbfc;
+    color: var(--qz-text-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--qz-border);
+}
+
+html body .table tbody tr {
+    border-bottom: 1px solid var(--qz-divider);
+}
+
+html body .table tbody tr:last-child {
+    border-bottom: 0;
+}
+
+html body .table tbody tr:hover {
+    background-color: #f8fbff;
+}
+
+html body .table-zebra tbody tr:nth-child(even) {
+    background-color: #fbfcfd;
+}
+
+html body .table-sm :where(th, td) {
+    padding: 7px 10px;
+}
+
+html body .table-xs :where(th, td) {
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+/* 5.4 卡片 / 面板 */
+html body .card {
+    background-color: var(--qz-surface);
+    border: 1px solid var(--qz-border);
+    box-shadow: var(--qz-shadow-xs);
+}
+
+html body .card-body {
+    padding: var(--qz-sp-5);
+}
+
+/* 5.5 徽标 / 标签：方角小标签，贴近参考图的“系统创建 / 自定义” */
+html body .badge {
+    height: 20px;
+    padding-inline: 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: var(--qz-radius-sm);
+    letter-spacing: .01em;
+}
+
+html body .badge-lg {
+    height: 24px;
+    padding-inline: 9px;
+    font-size: 12.5px;
+}
+
+html body .badge-sm {
+    height: 18px;
+    padding-inline: 6px;
+    font-size: 11px;
+}
+
+html body .badge-outline {
+    background-color: transparent;
+}
+
+/* 5.6 提示条：柔和底色 + 语义前景色 */
+html body .alert {
+    border-radius: var(--qz-radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    box-shadow: none;
+}
+
+html body .alert-info {
+    --alert-bg: var(--qz-primary-soft);
+    --alert-bg-mix: var(--qz-primary-soft);
+    border-color: var(--qz-primary-soft-border);
+    color: #0958d9;
+}
+
+html body .alert-success {
+    --alert-bg: var(--qz-success-soft);
+    --alert-bg-mix: var(--qz-success-soft);
+    border-color: #d5f0bd;
+    color: #3f8f18;
+}
+
+html body .alert-warning {
+    --alert-bg: var(--qz-warning-soft);
+    --alert-bg-mix: var(--qz-warning-soft);
+    border-color: #ffe6ad;
+    color: #96660a;
+}
+
+html body .alert-error {
+    --alert-bg: var(--qz-danger-soft);
+    --alert-bg-mix: var(--qz-danger-soft);
+    border-color: #ffccc7;
+    color: #cf1322;
+}
+
+/* 5.7 弹窗 */
+html body .modal-box {
+    border-radius: var(--qz-radius);
+    padding: var(--qz-sp-5);
+    box-shadow: var(--qz-shadow-lg);
+    border: 1px solid var(--qz-border);
+}
+
+html body .modal-backdrop {
+    background-color: rgba(16, 24, 40, .45);
+}
+
+/* 5.8 下拉 / 菜单 */
+html body .dropdown-content,
+html body .menu {
+    border-radius: var(--qz-radius);
+}
+
+html body .menu li > *:not(ul):not(.menu-title):not(details):not(.btn) {
+    border-radius: var(--qz-radius-sm);
+    font-size: 13px;
+}
+
+html body .menu li > *:not(ul):not(.menu-title):not(details):not(.btn):hover {
+    background-color: var(--qz-primary-soft);
+    color: var(--qz-primary);
+}
+
+/* 5.9 统计块 */
+html body .stats {
+    border-radius: var(--qz-radius);
+    border: 1px solid var(--qz-border);
+}
+
+html body .stat {
+    padding: var(--qz-sp-4) var(--qz-sp-5);
+}
+
+html body .stat-title {
+    font-size: 12px;
+    color: var(--qz-text-3);
+}
+
+html body .stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+html body .stat-desc {
+    font-size: 11.5px;
+    color: var(--qz-text-3);
+}
+
+/* 5.10 其他 */
+html body .progress {
+    height: 6px;
+    border-radius: var(--qz-radius-pill);
+    background-color: var(--qz-divider);
+}
+
+html body .divider {
+    color: var(--qz-text-3);
+    font-size: 12px;
+}
+
+html body .join-item {
+    border-radius: 0;
+}
+
+html body .join > :first-child {
+    border-start-start-radius: var(--qz-radius-sm);
+    border-end-start-radius: var(--qz-radius-sm);
+}
+
+html body .join > :last-child {
+    border-start-end-radius: var(--qz-radius-sm);
+    border-end-end-radius: var(--qz-radius-sm);
+}
+
+html body .link {
+    color: var(--qz-primary);
+    text-underline-offset: 3px;
+}
+
+html body .loading {
+    color: var(--qz-primary);
+}
+
+/* 日志 / 终端类区块保持深色，但统一圆角 */
+html body .bg-gray-900,
+html body .bg-black {
+    border-radius: var(--qz-radius);
+}
+
+/* ==========================================================================
+   6. 动效与无障碍
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* ==========================================================================
+   7. 响应式
+   ========================================================================== */
+@media (max-width: 1023.98px) {
+    /* 子栏空间不足时隐藏面包屑，仅保留标签页横向滚动 */
+    .qz-crumb {
+        display: none;
+    }
+
+    .qz-tabs {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --qz-topbar-h: 52px;
+        --qz-subbar-h: 42px;
+    }
+
+    .qz-userchip {
+        display: none;
+    }
+
+    .qz-tab {
+        padding-inline: 11px;
+        font-size: 12.5px;
+    }
+}

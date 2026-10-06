@@ -1,6 +1,8 @@
 name: Build Binaries
 
 on:
+  push:
+    branches: [main-stable]
   workflow_dispatch:
 
 jobs:
