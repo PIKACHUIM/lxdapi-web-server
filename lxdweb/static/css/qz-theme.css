@@ -1007,3 +1007,182 @@ html body .bg-black {
         font-size: 12.5px;
     }
 }
+
+/* ==========================================================================
+   8. 第二轮收敛：向参考图对齐（扁平 / 紧凑 / 单一品牌蓝）
+   —— 页面模板里残留的旧风格签名（多层阴影、大圆角、大标题、渐变、多种蓝）
+      在这里统一拉平，避免逐页改 40 个模板。
+   ========================================================================== */
+
+/* 8.1 阴影：参考图几乎不用阴影，只保留一层极淡的层级感 */
+html body .shadow-sm {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+}
+
+html body .shadow,
+html body .shadow-md,
+html body .shadow-lg,
+html body .shadow-xl,
+html body .shadow-2xl {
+    box-shadow: 0 2px 10px -4px rgba(16, 24, 40, .08);
+}
+
+/* 浮层重新拿到应有的投影（写在后面，覆盖上面的扁平化） */
+html body .modal-box,
+html body .dropdown-content,
+html body .qz-tabgroup-panel {
+    box-shadow: var(--qz-shadow-lg);
+}
+
+/* 8.2 圆角：统一 6px（rounded-full 的胶囊 / 圆形不受影响） */
+html body .rounded-lg,
+html body .rounded-xl,
+html body .rounded-2xl,
+html body .rounded-3xl {
+    border-radius: var(--qz-radius);
+}
+
+/* 8.3 标题紧凑化：参考图页标题约 17px、区块标题 15px */
+html body h1[class*="text-xl"],
+html body h1[class*="text-2xl"],
+html body h1[class*="text-3xl"],
+html body h2[class*="text-2xl"],
+html body h2[class*="text-3xl"] {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-weight: 600;
+    letter-spacing: -.01em;
+}
+
+html body h2[class*="text-xl"],
+html body h3[class*="text-xl"],
+html body h3[class*="text-2xl"],
+html body h4[class*="text-xl"] {
+    font-size: .9375rem;
+    line-height: 1.55;
+    font-weight: 600;
+}
+
+/* 8.4 渐变扁平化：带渐变的元素统一改为 from-* 对应的纯色 */
+html body [class*="bg-gradient-to-"][class*="from-"] {
+    background-image: none;
+}
+
+html body .from-blue-400,
+html body .from-blue-500,
+html body .from-blue-600 {
+    background-color: var(--qz-primary);
+}
+
+html body .from-green-400,
+html body .from-green-500 {
+    background-color: var(--qz-success);
+}
+
+html body .from-orange-400,
+html body .from-orange-500 {
+    background-color: var(--qz-warning);
+}
+
+html body .from-sky-400,
+html body .from-cyan-400,
+html body .from-cyan-500 {
+    background-color: #13c2c2;
+}
+
+html body .from-violet-400,
+html body .from-violet-500,
+html body .from-purple-400,
+html body .from-purple-500 {
+    background-color: #722ed1;
+}
+
+html body .from-slate-400,
+html body .from-gray-400,
+html body .from-gray-500,
+html body .from-gray-600 {
+    background-color: #6b7280;
+}
+
+html body .from-gray-50,
+html body .from-gray-100 {
+    background-color: var(--qz-surface-sunken);
+}
+
+html body .from-blue-50 {
+    background-color: var(--qz-canvas);
+}
+
+/* 8.5 蓝色归一：页面里散落的 Tailwind 蓝统一到品牌蓝 #1677ff */
+html body .text-blue-600,
+html body .text-blue-700 {
+    color: var(--qz-primary);
+}
+
+html body .text-blue-500 {
+    color: var(--qz-primary-hover);
+}
+
+html body .text-blue-800 {
+    color: var(--qz-primary-active);
+}
+
+html body .bg-blue-500,
+html body .bg-blue-600 {
+    background-color: var(--qz-primary);
+}
+
+html body .bg-blue-50 {
+    background-color: var(--qz-primary-soft);
+}
+
+html body .bg-blue-100 {
+    background-color: #dbe9ff;
+}
+
+html body .bg-blue-200 {
+    background-color: var(--qz-primary-soft-border);
+}
+
+html body .border-blue-500,
+html body .border-blue-600 {
+    border-color: var(--qz-primary);
+}
+
+html body .border-blue-100,
+html body .border-blue-200 {
+    border-color: var(--qz-primary-soft-border);
+}
+
+html body .ring-blue-500,
+html body .focus\:ring-blue-500:focus {
+    --tw-ring-color: rgba(22, 119, 255, .22);
+}
+
+html body .hover\:text-blue-600:hover,
+html body .hover\:text-blue-700:hover {
+    color: var(--qz-primary);
+}
+
+html body .hover\:bg-blue-50:hover {
+    background-color: var(--qz-primary-soft);
+}
+
+html body .hover\:bg-blue-100:hover {
+    background-color: #dbe9ff;
+}
+
+/* 8.6 面包屑移到画布上（参考图：面包屑在灰底，标签页在白卡上） */
+.qz-crumbbar {
+    background: var(--qz-canvas);
+}
+
+.qz-crumbbar-inner {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+.qz-crumbbar + .qz-subbar {
+    border-top: 1px solid var(--qz-border);
+}
