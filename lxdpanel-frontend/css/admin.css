@@ -244,8 +244,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 
 }
 .qz-tabs {
   display: flex; align-items: stretch; gap: 2px;
-  height: 100%; margin-left: auto;
-  overflow: visible; scrollbar-width: none; /* overflow-x:auto 会裁掉下拉面板 */
+  height: 100%;
+  overflow: visible; scrollbar-width: none; /* 左对齐：与面包屑同一起点 */ /* overflow-x:auto 会裁掉下拉面板 */
 }
 .qz-tabs::-webkit-scrollbar { display: none; }
 .qz-tab {

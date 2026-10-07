@@ -234,6 +234,12 @@ code, pre, .font-mono, .yaml-editor {
     padding-inline: var(--qz-sp-4);
 }
 
+/* 内容区与外壳同宽：Tailwind 的 .container 在 ≥1536px 视口会放大到 1536px，
+   导致面包屑/标签页（1280px 外壳）与内容左缘错位 */
+html body .container {
+    max-width: var(--qz-shell-max);
+}
+
 /* 4.2 深色顶栏 */
 .qz-topbar {
     position: sticky;
@@ -416,7 +422,7 @@ code, pre, .font-mono, .yaml-editor {
     align-items: stretch;
     gap: 2px;
     height: 100%;
-    margin-left: auto;
+    /* 左对齐：与上方面包屑、下方内容同一起点 */
     /* 桌面端不裁剪：overflow-x:auto 会使另一方向被强制算成 auto，
        绝对定位的下拉面板会被裁掉，表现为“点了没反应” */
     overflow: visible;
