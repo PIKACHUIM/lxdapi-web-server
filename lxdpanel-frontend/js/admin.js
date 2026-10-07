@@ -134,6 +134,23 @@
     document.querySelectorAll('.js-admin-logout').forEach((el) => el.addEventListener('click', ADMIN.logout));
     document.getElementById('btnRefresh').addEventListener('click', () => window.location.reload());
 
+    // 分组下拉：点击开合 + 点击外部关闭（桌面同时支持悬停展开）
+    document.querySelectorAll('.qz-tabgroup').forEach((group) => {
+      const btn = group.querySelector('.qz-tab');
+      if (!btn) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = group.classList.contains('is-open');
+        document.querySelectorAll('.qz-tabgroup.is-open').forEach((g) => g.classList.remove('is-open'));
+        if (!wasOpen) group.classList.add('is-open');
+      });
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.qz-tabgroup')) {
+        document.querySelectorAll('.qz-tabgroup.is-open').forEach((g) => g.classList.remove('is-open'));
+      }
+    });
+
     // 品牌
     LXD.loadBrand().then((b) => {
       LXD.applyBrand(b);

@@ -245,7 +245,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 
 .qz-tabs {
   display: flex; align-items: stretch; gap: 2px;
   height: 100%; margin-left: auto;
-  overflow-x: auto; scrollbar-width: none;
+  overflow: visible; scrollbar-width: none; /* overflow-x:auto 会裁掉下拉面板 */
 }
 .qz-tabs::-webkit-scrollbar { display: none; }
 .qz-tab {
@@ -284,7 +284,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 
   z-index: 60;
 }
 .qz-tabgroup:hover .qz-tabgroup-panel,
-.qz-tabgroup:focus-within .qz-tabgroup-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.qz-tabgroup:focus-within .qz-tabgroup-panel,
+.qz-tabgroup.is-open .qz-tabgroup-panel { opacity: 1; visibility: visible; transform: translateY(0); }
 .qz-tabgroup:hover > .qz-tab,
 .qz-tabgroup.is-active > .qz-tab { color: var(--primary); background: #eaf2ff; }
 .qz-tabgroup.is-active > .qz-tab { font-weight: 500; }

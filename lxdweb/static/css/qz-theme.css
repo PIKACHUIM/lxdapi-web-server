@@ -417,8 +417,9 @@ code, pre, .font-mono, .yaml-editor {
     gap: 2px;
     height: 100%;
     margin-left: auto;
-    overflow-x: auto;
-    overflow-y: visible;
+    /* 桌面端不裁剪：overflow-x:auto 会使另一方向被强制算成 auto，
+       绝对定位的下拉面板会被裁掉，表现为“点了没反应” */
+    overflow: visible;
     scrollbar-width: none;
 }
 
@@ -504,7 +505,8 @@ code, pre, .font-mono, .yaml-editor {
 }
 
 .qz-tabgroup:hover .qz-tabgroup-panel,
-.qz-tabgroup:focus-within .qz-tabgroup-panel {
+.qz-tabgroup:focus-within .qz-tabgroup-panel,
+.qz-tabgroup.is-open .qz-tabgroup-panel {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -982,13 +984,14 @@ html body .bg-black {
    7. 响应式
    ========================================================================== */
 @media (max-width: 1023.98px) {
-    /* 子栏空间不足时隐藏面包屑，仅保留标签页横向滚动 */
+    /* 子栏空间不足时隐藏面包屑，仅保留标签页横向滚动（此时下拉被裁剪，用汉堡菜单） */
     .qz-crumb {
         display: none;
     }
 
     .qz-tabs {
         margin-left: 0;
+        overflow-x: auto;
     }
 }
 
