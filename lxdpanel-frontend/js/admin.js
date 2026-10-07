@@ -52,15 +52,32 @@
     }
   ];
 
-  /** 渲染管理端外壳 */
+  /** 渲染管理端外壳（轻舟云风格：深色顶栏 + 面包屑 + 白色标签页子栏） */
   function shell(active, title, sub) {
     const app = document.getElementById('admin-app');
     if (!app) return;
 
-    const menuHtml = MENUS.map((group) => {
+    // 桌面端顶栏标签：单项组平铺，多项组悬停下拉
+    const tabs = MENUS.map((group) => {
+      if (group.items.length === 1) {
+        const it = group.items[0];
+        return '<a class="qz-tab' + (it.id === active ? ' is-active' : '') + '" href="' + it.href + '">' + it.text + '</a>';
+      }
+      const hasActive = group.items.some((it) => it.id === active);
       const items = group.items.map((it) => {
-        const cls = 'menu-item' + (it.id === active ? ' active' : '');
-        return '<a class="' + cls + '" href="' + it.href + '">' +
+        return '<a class="qz-tabmenu-item' + (it.id === active ? ' is-active' : '') + '" href="' + it.href + '">' +
+          '<span class="mi-icon">' + it.icon + '</span>' + it.text + '</a>';
+      }).join('');
+      return '<div class="qz-tabgroup' + (hasActive ? ' is-active' : '') + '">' +
+        '<button type="button" class="qz-tab">' + group.label +
+        ' <span class="mi-caret">' + ICONS.chevron + '</span></button>' +
+        '<div class="qz-tabgroup-panel">' + items + '</div></div>';
+    }).join('');
+
+    // 移动端抽屉菜单（沿用原侧边栏）
+    const drawer = MENUS.map((group) => {
+      const items = group.items.map((it) => {
+        return '<a class="menu-item' + (it.id === active ? ' active' : '') + '" href="' + it.href + '">' +
           '<span class="mi-icon">' + it.icon + '</span>' + it.text + '</a>';
       }).join('');
       return '<div class="menu-group-label">' + group.label + '</div>' + items;
@@ -70,28 +87,42 @@
       '<div class="admin-shell">' +
       '<div class="side-overlay" id="sideOverlay"></div>' +
       '<aside class="admin-sidebar" id="adminSidebar">' +
-      '  <div class="side-brand"><div class="brand-logo" id="brandLogo">L</div>' +
-      '    <div><div class="side-brand-name" id="brandName">LXD 管理后台</div><div class="side-brand-sub">Admin Panel</div></div>' +
+      '  <div class="side-brand"><div class="brand-logo">L</div>' +
+      '    <div><div class="side-brand-name">LXD 管理后台</div><div class="side-brand-sub">Admin Panel</div></div>' +
       '  </div>' +
-      '  <nav class="side-nav">' + menuHtml + '</nav>' +
+      '  <nav class="side-nav">' + drawer + '</nav>' +
       '  <div class="side-foot">' +
-      '    <div class="brand-logo" id="footLogo" style="width:26px;height:26px;font-size:12px">A</div>' +
-      '    <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;color:var(--text-1)">管理员</div>' +
-      '      <div style="font-size:11px;color:var(--text-3)">LXD Panel</div></div>' +
-      '    <button class="btn btn-ghost btn-sm" id="adminLogout" title="退出登录">' + ICONS.logout + '</button>' +
+      '    <div class="brand-logo" style="width:26px;height:26px;font-size:12px">A</div>' +
+      '    <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;color:var(--side-text,#c3cad6)">管理员</div>' +
+      '      <div style="font-size:11px;color:var(--side-text-2,#8a93a3)">LXD Panel</div></div>' +
+      '    <button class="btn btn-ghost btn-sm js-admin-logout" title="退出登录">' + ICONS.logout + '</button>' +
       '  </div>' +
       '</aside>' +
       '<div class="admin-main">' +
       '  <header class="admin-topbar">' +
       '    <button class="btn btn-ghost btn-sm btn-menu" id="btnMenu">' + ICONS.menu + '</button>' +
-      '    <div class="topbar-title">' + (title || '') + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>' +
+      '    <a class="brand" href="dashboard.html">' +
+      '      <div class="brand-logo" id="brandLogo">L</div>' +
+      '      <div class="qz-brand-text"><strong id="brandName">LXD 管理后台</strong><em>Admin Console</em></div>' +
+      '    </a>' +
       '    <span class="topbar-spacer"></span>' +
       '    <button class="btn btn-ghost btn-sm" id="btnRefresh" title="刷新">' + ICONS.refresh + '</button>' +
+      '    <button class="btn btn-ghost btn-sm js-admin-logout" title="退出登录">' + ICONS.logout + '</button>' +
       '  </header>' +
+      '  <div class="admin-crumbbar">' +
+      '    <div class="admin-crumbbar-inner">' +
+      '      <nav class="qz-crumb"><a href="dashboard.html">Home</a><i>/</i><span id="brandSub">LXD 管理后台</span><i>/</i><b>' + (title || '') + '</b></nav>' +
+      '    </div>' +
+      '  </div>' +
+      '  <div class="admin-subbar">' +
+      '    <div class="admin-subbar-inner">' +
+      '      <nav class="qz-tabs">' + tabs + '</nav>' +
+      '    </div>' +
+      '  </div>' +
       '  <main class="admin-content" id="adminContent"></main>' +
       '</div></div>';
 
-    // 移动端菜单
+    // 移动端抽屉
     document.getElementById('btnMenu').addEventListener('click', () => {
       document.getElementById('adminSidebar').classList.add('open');
       document.getElementById('sideOverlay').classList.add('show');
@@ -100,15 +131,15 @@
       document.getElementById('adminSidebar').classList.remove('open');
       document.getElementById('sideOverlay').classList.remove('show');
     });
-    document.getElementById('adminLogout').addEventListener('click', ADMIN.logout);
+    document.querySelectorAll('.js-admin-logout').forEach((el) => el.addEventListener('click', ADMIN.logout));
     document.getElementById('btnRefresh').addEventListener('click', () => window.location.reload());
 
     // 品牌
     LXD.loadBrand().then((b) => {
       LXD.applyBrand(b);
       document.title = (b.site_name || 'LXD 管理后台') + ' - ' + (title || '');
-      const fn = document.getElementById('footLogo');
-      if (fn) fn.textContent = (b.site_name || 'A').charAt(0).toUpperCase();
+      const crumbName = document.getElementById('brandSub');
+      if (crumbName) crumbName.textContent = b.site_name || 'LXD 管理后台';
     }).catch(() => {});
   }
 

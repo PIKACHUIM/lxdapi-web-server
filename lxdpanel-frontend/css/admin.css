@@ -181,3 +181,129 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 
 /* 侧栏底部文案由 JS 内联 var(--text-1)，浅色变量在深底上不可读，这里强制提亮 */
 .side-foot div { color: #c3cad6 !important; }
 .side-overlay { background: rgba(16, 24, 40, .45); }
+
+/* ============================================================
+   QZ 主题层 v3：顶栏 + 面包屑 + 标签页子栏（对齐轻舟云控制台）
+   桌面端不再使用侧边栏；<900px 时侧边栏转为移动端抽屉。
+   ============================================================ */
+.admin-main { margin-left: 0; }
+.admin-sidebar { display: none; }
+
+.admin-topbar {
+  height: 56px;
+  padding: 0 20px;
+  background: #1b1e23;
+  border-bottom-color: rgba(255, 255, 255, .06);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #e6e9ee;
+}
+.admin-topbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.admin-topbar .brand-logo {
+  width: 30px; height: 30px; border-radius: 6px; font-size: 14px;
+  box-shadow: 0 2px 8px -2px rgba(22, 119, 255, .55);
+}
+.qz-brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.qz-brand-text strong { font-size: 15px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qz-brand-text em {
+  font-style: normal; font-size: 9.5px; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase; color: #8a93a3; margin-top: 1px;
+}
+.admin-topbar .btn {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .1);
+  color: #e6e9ee;
+}
+.admin-topbar .btn:hover { background: rgba(255, 255, 255, .13); border-color: rgba(255, 255, 255, .18); color: #fff; }
+.admin-topbar .topbar-title { display: none; }
+
+/* 面包屑：画布色横条 */
+.admin-crumbbar { background: var(--bg-0); }
+.admin-crumbbar-inner {
+  display: flex; align-items: center;
+  height: 40px; max-width: 1280px; margin: 0 auto; padding: 0 20px;
+}
+.qz-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.qz-crumb i { font-style: normal; color: #c4c9d1; }
+.qz-crumb b { font-weight: 500; color: var(--text-1); }
+.qz-crumb a { color: inherit; text-decoration: none; }
+.qz-crumb a:hover { color: var(--primary); }
+
+/* 白色子栏：标签页导航 */
+.admin-subbar {
+  position: sticky;
+  top: 56px;
+  z-index: 29;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.admin-crumbbar + .admin-subbar { border-top: 1px solid var(--border); }
+.admin-subbar-inner {
+  display: flex; align-items: stretch;
+  height: 46px; max-width: 1280px; margin: 0 auto; padding: 0 20px;
+}
+.qz-tabs {
+  display: flex; align-items: stretch; gap: 2px;
+  height: 100%; margin-left: auto;
+  overflow-x: auto; scrollbar-width: none;
+}
+.qz-tabs::-webkit-scrollbar { display: none; }
+.qz-tab {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 100%; padding: 0 14px;
+  font-size: 13px; color: var(--text-2);
+  text-decoration: none; white-space: nowrap;
+  border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font);
+  transition: color .18s, background-color .18s;
+}
+.qz-tab::after {
+  content: "";
+  position: absolute; left: 14px; right: 14px; bottom: 0;
+  height: 2px; border-radius: 2px 2px 0 0;
+  background: var(--primary);
+  transform: scaleX(0);
+  transition: transform .18s cubic-bezier(.16, 1, .3, 1);
+}
+.qz-tab:hover { color: var(--primary); background: #eaf2ff; }
+.qz-tab.is-active { color: var(--primary); font-weight: 500; }
+.qz-tab.is-active::after { transform: scaleX(1); }
+.qz-tab:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+
+.qz-tabgroup { position: relative; display: inline-flex; align-items: stretch; }
+.qz-tabgroup-panel {
+  position: absolute; top: calc(100% - 1px); left: 0;
+  min-width: 190px; padding: 4px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 6px);
+  box-shadow: 0 12px 28px -8px rgba(16, 24, 40, .16);
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .18s, transform .18s, visibility .18s;
+  z-index: 60;
+}
+.qz-tabgroup:hover .qz-tabgroup-panel,
+.qz-tabgroup:focus-within .qz-tabgroup-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.qz-tabgroup:hover > .qz-tab,
+.qz-tabgroup.is-active > .qz-tab { color: var(--primary); background: #eaf2ff; }
+.qz-tabgroup.is-active > .qz-tab { font-weight: 500; }
+.qz-tabgroup.is-active > .qz-tab::after { transform: scaleX(1); }
+
+.qz-tabmenu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-size: 13px; color: var(--text-2);
+  text-decoration: none;
+}
+.qz-tabmenu-item .mi-icon { width: 16px; text-align: center; color: var(--text-3); }
+.qz-tabmenu-item:hover { background: #eaf2ff; color: var(--primary); }
+.qz-tabmenu-item:hover .mi-icon { color: var(--primary); }
+.qz-tabmenu-item.is-active { background: #eaf2ff; color: var(--primary); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .admin-sidebar { display: flex; }
+  .admin-crumbbar, .admin-subbar { display: none; }
+  .admin-topbar { height: 52px; }
+}
